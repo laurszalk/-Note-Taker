@@ -10,7 +10,7 @@ const db = require("../../db/db.json");
 // ALL of these routes have the '/api' as a prefix
 // This route is looking for "/api/notes" w/ GET HTTP Method
 router.get("/notes", (req, res) => {
-  res.json(db); //
+  res.json(db);
 });
 
 router.post("/notes", (req, res) => {
@@ -25,17 +25,17 @@ router.post("/notes", (req, res) => {
     text: req.body.text,
   };
 
-  console.log("new Data Object: ", newData);
-  // What do we do with our new data?
-  console.log("Current Data in DB: ", db);
-  //console.log(typeof db)
+  //   console.log("new Data Object: ", newData);
+  //   // What do we do with our new data?
+  //   console.log("Current Data in DB: ", db);
+  //   //console.log(typeof db)
   // add the new data
   db.push(newData);
 
   console.log("Added Data in DB: ", db);
 
   // save the updated DB.json file
-  fs.writeFileSync("../../db/db.json", db);
+  fs.writeFileSync("../../db/db.json", JSON.stringify(newData));
 
   //console.log(db)
   res.send("Hit route '/api/notes' POST method");
