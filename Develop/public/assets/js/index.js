@@ -31,7 +31,7 @@ const getNotes = () =>
     headers: {
       'Content-Type': 'application/json',
     },
-  });
+  }).then(renderNoteList)
 
 const saveNote = (note) =>
   fetch('/api/notes', {
