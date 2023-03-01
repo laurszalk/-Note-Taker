@@ -5,45 +5,72 @@ const { v4: uuidv4 } = require("uuid");
 const fs = require("fs");
 
 // reference to our dataset
-const db = require("../../db/db.json");
 
 // ALL of these routes have the '/api' as a prefix
 // This route is looking for "/api/notes" w/ GET HTTP Method
 router.get("/notes", (req, res) => {
-  res.json(db);
+  //readFromFile("./db/db.json").then((data) => res.json(JSON.parse(data)));
+
+  const db = require("../../db/db.json");
+
+  fs.readFile("./db/db.json", "utf-8", function (error, data) {
+    if (error) {
+      console.log(error);
+      throw error;
+    }
+    console.log(data);
+    console.log(typeof data);
+    res.json(db);
+  });
+
+  /*fs.readFile("./db/db.json").then((data) => {
+    console.log(data);
+    res.json(JSON.parse(data))
+  });
+  */
+  // res.json(db);
 });
 
 router.post("/notes", (req, res) => {
-  // console.log(req);
-  console.log("Body: ", req.body); // { title: "blah", text: "something"}
-  // The req.body is our DATA ({ })
+  fs.readFile("./db/db.json", "utf8", function (err, data) {
+    if (err) throw err;
+    console.log(data); // this data is JSON
 
-  // we can add important addtional info in a TEMP object
-  let newData = {
-    id: uuidv4(),
-    title: req.body.title,
-    text: req.body.text,
-  };
+    // CONVERT THE DATA OBJECT TO A JS ARRAY
+    let storedData = JSON.parse(data);
 
-  //   console.log("new Data Object: ", newData);
-  //   // What do we do with our new data?
-  //   console.log("Current Data in DB: ", db);
-  //   //console.log(typeof db)
-  // add the new data
-  db.push(newData);
+    console.log(storedData); // this is an JS ARRAY
+    console.log(typeof storedData);
 
-  console.log("Added Data in DB: ", db);
+    // create temp data object
+    let newData = {
+      id: 12,
+      title: req.body.title,
+      text: req.body.text,
+    };
+    // ADD DATA to
+    storedData.push(newData);
 
-  // save the updated DB.json file
-  fs.writeFileSync("../../db/db.json", JSON.stringify(newData));
+    fs.writeFile("./db/db.json", JSON.stringify(storedData), function (err) {
+      if (err) throw err;
 
-  //console.log(db)
-  res.send("Hit route '/api/notes' POST method");
+      console.log("Success");
+      // JUST SEND AN EMPTY RESPONSE --> THE CLIENT SIDE SHOULD THEN RETRIGGER A PAGE RELOAD AUTOMATICALLY
+      res.json();
+    });
+  });
 });
 
 router.delete("/notes/:id", (req, res) => {
   // console.log(req);
   console.log("Params: ", req.params); // { id: "blah", text: "something"}
+
+  // we do simlar to POST route
+  // BRING in the dataset
+
+  // Filter through and remove the matching ID (req.params.id) (UDPATE DATASET)
+
+  // SAVE the new dataset without the deleted record
   res.send("Hit route '/api/notes' POST method");
 });
 
